@@ -35,7 +35,7 @@
   --content-padding: 1.125rem;
   --inline-spacing: 0.5rem;
   --border-radius: 6px;
-  --surface-ground: #f8fafc;
+  --surface-ground: #f4f6fc;
   --surface-section: #ffffff;
   --surface-card: #ffffff;
   --surface-overlay: #ffffff;
@@ -46,6 +46,7 @@
   --highlight-bg: #ecfdf5;
   --highlight-text-color: #047857;
   --p-anchor-gutter: 2px;
+  --card-shadow: 0px 4px 30px rgba(221, 224, 255, .54);
   color-scheme: light;
 }
 

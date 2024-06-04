@@ -3,8 +3,8 @@ import { toRefs, reactive, computed } from 'vue';
 const layoutConfig = reactive({
     ripple: true,
     darkTheme: false,
-    inputStyle: 'outlined',
-    menuMode: 'static',
+    inputStyle: 'filled',
+    menuMode: 'overlay',
     theme: 'aura-light-green',
     scale: 14,
     activeMenuItem: null
