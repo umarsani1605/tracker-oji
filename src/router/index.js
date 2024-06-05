@@ -129,7 +129,21 @@ const router = createRouter({
                 {
                     path: '/pages/empty',
                     name: 'empty',
-                    component: () => import('@/views/pages/Empty.vue')
+                    component: () => import('@/views/pages/Empty.vue'),
+                    children: [
+                        {
+                            path: '/pages/empty/alquran',
+                            component: () => import('@/views/pages/menu/AlQuran.vue')
+                        },
+                        {
+                            path: '/pages/empty/tahlil-wirid',
+                            component: () => import('@/views/pages/menu/TahlilWirid.vue')
+                        },
+                        {
+                            path: '/pages/empty/sholat-wudhu',
+                            component: () => import('@/views/pages/menu/SholatWudhu.vue')
+                        }
+                    ]
                 },
                 {
                     path: '/pages/crud',

@@ -1,25 +1,22 @@
 <template>
     <div class="layout-wrapper" :class="containerClass">
-        <app-topbar></app-topbar>
+        <!-- <app-topbar></app-topbar> -->
         <!-- <div class="layout-sidebar">
             <app-sidebar></app-sidebar>
         </div> -->
         <div class="layout-main-container">
             <div class="layout-main">
                 <div class="py-4">
-                    <h1>Tracker Capaian Ngaji</h1>
+                    <h1>Tracker Capaian Ngaji 📝</h1>
                 </div>
                 <router-view></router-view>
             </div>
             <!-- <app-footer></app-footer> -->
         </div>
-        <app-config></app-config>
         <div class="layout-mask"></div>
     </div>
     <Toast />
 </template>
-
-<style lang="scss" scoped></style>
 
 <script setup>
 import { computed, watch, ref } from 'vue';

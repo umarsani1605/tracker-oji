@@ -1,28 +1,3 @@
-<script setup>
-import { ref } from "vue";
-
-const date = ref(null);
-const dropdownValue = ref(null);
-const dropdownValues = ref([
-    { name: 'Tidak Tercapai' },
-    { name: 'Tercapai' },
-]);
-
-const nestedRouteItems = ref([
-    {
-        label: "Al-Qur'an",
-        to: "/pages/menu/alquran"
-    },
-    {
-        label: "Tahlil dan Wirid",
-        to: "/pages/menu/tahlilwirid"
-    },
-    {
-        label: "Sholat dan Wudhu",
-        to: "/pages/menu/sholatwudhu"
-    },
-]);
-</script>
 <template>
     <div class="grid bg-black">
         <div class="col-12 md:col-5">
@@ -37,7 +12,7 @@ const nestedRouteItems = ref([
                     <label for="email1">Kode Santri</label>
                     <div class="flex flex-row gap-3">
                         <InputText id="email1" type="text" />
-                        <Button class="w-2" label="Cek"></Button>
+                        <Button class="w-4 md:w-3" label="Cek"></Button>
                     </div>
                 </div>
             </div>
@@ -62,11 +37,24 @@ const nestedRouteItems = ref([
                     </div>
                 </div>
                 <Divider class="my-3" />
-                <div class="col-12 md:col-6">
-                    <div class="card card-w-title">
-                        <TabMenu :model="nestedRouteItems" />
-                        <router-view />
-                    </div>
+                <div class="">
+                    <TabView :scrollable="true">
+                        <TabPanel v-for="(tab, index) in tabItems" :key="index" :header="tab.title">
+                            <div v-for="(value, index) in tab.children" :key="index" class="py-3">
+                                <h5>{{ value.title }}</h5>
+                                <div class="formgrid grid">
+                                    <div v-if="value.setoran" class="field col-6">
+                                        <label for="name2">Setoran</label>
+                                        <Dropdown v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="Capaian" />
+                                    </div>
+                                    <div v-if="value.hafalan"class="field col-5">
+                                        <label for="email2">Hafalan</label>
+                                        <Dropdown v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="Capaian" />
+                                    </div>
+                                </div>
+                            </div>
+                        </TabPanel>
+                    </TabView>
                 </div>
                 <div class="flex flex-row-reverse">
                     <Button label="Simpan" icon="pi pi-save" class="w-fit mr-2"></Button>
@@ -75,3 +63,99 @@ const nestedRouteItems = ref([
         </div>
     </div>
 </template>
+
+<script setup>
+import { ref, watch } from 'vue';
+
+const date = ref(null);
+
+const dropdownValue = ref(null);
+const dropdownValues = ref([
+    { name: 'Tidak Tercapai' },
+    { name: 'Tercapai' },
+]);
+
+const tabItems = [
+    {
+        title: "Al-Qur'an",
+        children: [
+            {
+                title: "Juz Amma",
+                hafalan: true,
+                setoran: true,
+            },
+            {
+                title: "Al-Mulk",
+                hafalan: true,
+                setoran: true,
+            },
+            {
+                title: "As-Sajdah",
+                hafalan: true,
+                setoran: true,
+            },
+            {
+                title: "As-Waqiah",
+                hafalan: true,
+                setoran: true,
+            },
+            {
+                title: "As-Rahman",
+                hafalan: true,
+                setoran: true,
+            },
+            {
+                title: "Yasin",
+                hafalan: true,
+                setoran: true,
+            },
+        ]
+    },
+    {
+        title: "Tahlil dan Wirid",
+        children: [
+            {
+                title: "Tahlil",
+                hafalan: true,
+                setoran: true,
+            },
+            {
+                title: "Wirid",
+                hafalan: true,
+                setoran: true,
+            },
+            {
+                title: "Istighosah",
+                hafalan: true,
+                setoran: true,
+            },
+            {
+                title: "Ratibul Haddad",
+                hafalan: false,
+                setoran: true,
+            },
+            {
+                title: "Maulid Barzanji",
+                hafalan: false,
+                setoran: true,
+            }
+        ]
+    },
+    {
+        title: "Sholat dan Wudhu",
+        children: [
+            {
+                title: "Bacaan Sholat",
+                hafalan: true,
+                setoran: true,
+            },
+            {
+                title: "Bacaan Wudhu",
+                hafalan: true,
+                setoran: true,
+            },
+        ]
+    },
+];
+
+</script>
