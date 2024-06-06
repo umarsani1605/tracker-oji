@@ -20,28 +20,28 @@
 
         <div class="col-12 md:col-7">
             <div class="card p-fluid">
-                <div class="">
-                    <TabView :scrollable="true">
-                        <TabPanel v-for="(tab, index) in tabItems" :key="index" :header="tab.title">
-                            <div v-for="(value, index) in tab.children" :key="index" class="py-3">
-                                <h5>{{ value.title }}</h5>
-                                <div class="formgrid md:grid">
-                                    <div v-if="value.setoran" class="field md:col-6">
-                                        <label for="name2">Setoran</label>
-                                        <Dropdown v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="Capaian" />
-                                    </div>
-                                    <div v-if="value.hafalan"class="field md:col-5">
-                                        <label for="email2">Hafalan</label>
-                                        <Dropdown v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="Capaian" />
-                                    </div>
-                                </div>
+                <h3>Capaian</h3>
+                <DataTable :value="customer3" rowGroupMode="subheader" groupRowsBy="representative.name" sortMode="single" sortField="representative.name" :sortOrder="1" scrollable scrollHeight="400px">
+                    <Column field="representative.name" header="Representative"></Column>
+                    <Column field="name" header="Name"></Column>
+                    <Column field="country" header="Country">
+                        <template #body="{ data }">
+                            <div class="flex align-items-center gap-2">
+                                <img alt="flag" src="/demo/images/flag/flag_placeholder.png" :class="`flag flag-${data.country.code}`" style="width: 24px" />
+                                <span>{{ data.country.name }}</span>
                             </div>
-                        </TabPanel>
-                    </TabView>
-                </div>
-                <div class="flex flex-row-reverse">
-                    <Button label="Simpan" icon="pi pi-save" class="w-fit mr-2"></Button>
-                </div>
+                        </template>
+                    </Column>
+                    <template #groupheader="slotProps">
+                        <div class="flex align-items-center gap-2">
+                            <img :alt="slotProps.data.representative.name" :src="'/demo/images/avatar/' + slotProps.data.representative.image" width="32" style="vertical-align: middle" />
+                            <span>{{ slotProps.data.representative.name }}</span>
+                        </div>
+                    </template>
+                    <template #groupfooter="slotProps">
+                        <td style="text-align: right" class="text-bold pr-6">Total Customers: {{ calculateCustomerTotal(slotProps.data.representative.name) }}</td>
+                    </template>
+                </DataTable>
             </div>
         </div>
     </div>
@@ -54,8 +54,10 @@
 </style>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, onBeforeMount, reactive } from 'vue';
+import { CustomerService } from '@/service/CustomerService';
 
+const customer3 = ref(null);
 const date = ref(null);
 
 const dropdownValue = ref(null);
@@ -63,6 +65,23 @@ const dropdownValues = ref([
     { name: 'Tidak Tercapai' },
     { name: 'Tercapai' },
 ]);
+
+const customerService = new CustomerService();
+
+
+onBeforeMount(() => {
+    customerService.getCustomersMedium().then((data) => (customer3.value = data));
+});
+
+const data = {
+    data: [
+        {
+            category: "Al-Qur'an",
+            name: "Juz Amma",
+            hafalan: true,
+        }
+    ]
+}
 
 const tabItems = [
     {
