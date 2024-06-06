@@ -21,25 +21,25 @@
         <div class="col-12 md:col-7">
             <div class="card p-fluid">
                 <h3>Capaian</h3>
-                <DataTable :value="customer3" rowGroupMode="subheader" groupRowsBy="representative.name" sortMode="single" sortField="representative.name" :sortOrder="1" scrollable scrollHeight="400px">
-                    <Column field="representative.name" header="Representative"></Column>
-                    <Column field="name" header="Name"></Column>
-                    <Column field="country" header="Country">
-                        <template #body="{ data }">
-                            <div class="flex align-items-center gap-2">
-                                <img alt="flag" src="/demo/images/flag/flag_placeholder.png" :class="`flag flag-${data.country.code}`" style="width: 24px" />
-                                <span>{{ data.country.name }}</span>
-                            </div>
+                <DataTable :value="dataSantri" rowGroupMode="subheader" groupRowsBy="category" sortMode="single" sortField="category" :sortOrder="1" scrollable scrollHeight="400px" showGridlines>
+                    <Column field="category" header="Representative"></Column>
+                    <Column field="name" header="Nama" style="min-width: 8rem"></Column>
+                    <Column field="setoran" header="Setoran" style="min-width: 9rem">
+                        <template #body="slotProps">
+                            <Tag :value="slotProps.data.setoran? 'Tercapai' : 'Tidak Tercapai'" :severity="slotProps.data.setoran? 'success' : 'danger'" />
                         </template>
                     </Column>
+                    <Column field="hafalan" header="Hafalan" style="min-width: 9rem">
+                        <template #body="slotProps">
+                            <Tag :value="slotProps.data.hafalan? 'Tercapai' : 'Tidak Tercapai'" :severity="slotProps.data.hafalan? 'success' : 'danger'" />
+                        </template>
+                    </Column>
+                    <Column field="pentashih" header="Pentashih"></Column>
+                    <Column field="tanggal" header="Tanggal" style="min-width: 13rem"></Column>
                     <template #groupheader="slotProps">
                         <div class="flex align-items-center gap-2">
-                            <img :alt="slotProps.data.representative.name" :src="'/demo/images/avatar/' + slotProps.data.representative.image" width="32" style="vertical-align: middle" />
-                            <span>{{ slotProps.data.representative.name }}</span>
+                            <span class="text-bold"><strong>{{ slotProps.data.category }}</strong></span>
                         </div>
-                    </template>
-                    <template #groupfooter="slotProps">
-                        <td style="text-align: right" class="text-bold pr-6">Total Customers: {{ calculateCustomerTotal(slotProps.data.representative.name) }}</td>
                     </template>
                 </DataTable>
             </div>
@@ -57,8 +57,7 @@
 import { ref, onBeforeMount, reactive } from 'vue';
 import { CustomerService } from '@/service/CustomerService';
 
-const customer3 = ref(null);
-const date = ref(null);
+const dataSantri = ref(null);
 
 const dropdownValue = ref(null);
 const dropdownValues = ref([
@@ -70,100 +69,8 @@ const customerService = new CustomerService();
 
 
 onBeforeMount(() => {
-    customerService.getCustomersMedium().then((data) => (customer3.value = data));
+    customerService.getCustomersMedium().then((data) => (dataSantri.value = data));
+    console.log(dataSantri.value);
 });
-
-const data = {
-    data: [
-        {
-            category: "Al-Qur'an",
-            name: "Juz Amma",
-            hafalan: true,
-        }
-    ]
-}
-
-const tabItems = [
-    {
-        title: "Al-Qur'an",
-        children: [
-            {
-                title: "Juz Amma",
-                hafalan: true,
-                setoran: true,
-            },
-            {
-                title: "Al-Mulk",
-                hafalan: true,
-                setoran: true,
-            },
-            {
-                title: "As-Sajdah",
-                hafalan: true,
-                setoran: true,
-            },
-            {
-                title: "As-Waqiah",
-                hafalan: true,
-                setoran: true,
-            },
-            {
-                title: "As-Rahman",
-                hafalan: true,
-                setoran: true,
-            },
-            {
-                title: "Yasin",
-                hafalan: true,
-                setoran: true,
-            },
-        ]
-    },
-    {
-        title: "Tahlil dan Wirid",
-        children: [
-            {
-                title: "Tahlil",
-                hafalan: true,
-                setoran: true,
-            },
-            {
-                title: "Wirid",
-                hafalan: true,
-                setoran: true,
-            },
-            {
-                title: "Istighosah",
-                hafalan: true,
-                setoran: true,
-            },
-            {
-                title: "Ratibul Haddad",
-                hafalan: false,
-                setoran: true,
-            },
-            {
-                title: "Maulid Barzanji",
-                hafalan: false,
-                setoran: true,
-            }
-        ]
-    },
-    {
-        title: "Sholat dan Wudhu",
-        children: [
-            {
-                title: "Bacaan Sholat",
-                hafalan: true,
-                setoran: true,
-            },
-            {
-                title: "Bacaan Wudhu",
-                hafalan: true,
-                setoran: true,
-            },
-        ]
-    },
-];
 
 </script>

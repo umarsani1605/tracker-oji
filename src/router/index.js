@@ -16,7 +16,21 @@ const router = createRouter({
                 {
                     path: '/pages/pentashih',
                     name: 'pentashih',
-                    component: () => import('@/views/pages/Pentashih.vue')
+                    component: () => import('@/views/pages/Pentashih.vue'),
+                    children: [
+                        {
+                            path: '/pages/empty/alquran',
+                            component: () => import('@/views/pages/menu/AlQuran.vue')
+                        },
+                        {
+                            path: '/pages/empty/tahlil-wirid',
+                            component: () => import('@/views/pages/menu/TahlilWirid.vue')
+                        },
+                        {
+                            path: '/pages/empty/sholat-wudhu',
+                            component: () => import('@/views/pages/menu/SholatWudhu.vue')
+                        }
+                    ]
                 },
                 {
                     path: '/pages/raport-santri',
@@ -135,25 +149,6 @@ const router = createRouter({
                     path: '/pages/timeline',
                     name: 'timeline',
                     component: () => import('@/views/pages/Timeline.vue')
-                },
-                {
-                    path: '/pages/empty',
-                    name: 'empty',
-                    component: () => import('@/views/pages/Empty.vue'),
-                    children: [
-                        {
-                            path: '/pages/empty/alquran',
-                            component: () => import('@/views/pages/menu/AlQuran.vue')
-                        },
-                        {
-                            path: '/pages/empty/tahlil-wirid',
-                            component: () => import('@/views/pages/menu/TahlilWirid.vue')
-                        },
-                        {
-                            path: '/pages/empty/sholat-wudhu',
-                            component: () => import('@/views/pages/menu/SholatWudhu.vue')
-                        }
-                    ]
                 },
                 {
                     path: '/pages/crud',
