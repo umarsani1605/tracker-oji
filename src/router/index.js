@@ -14,6 +14,16 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
+                    path: '/pages/pentashih',
+                    name: 'pentashih',
+                    component: () => import('@/views/pages/Pentashih.vue')
+                },
+                {
+                    path: '/pages/raport-santri',
+                    name: 'raport-santri',
+                    component: () => import('@/views/pages/Santri.vue')
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')
@@ -156,11 +166,6 @@ const router = createRouter({
                     component: () => import('@/views/utilities/Documentation.vue')
                 }
             ]
-        },
-        {
-            path: '/landing',
-            name: 'landing',
-            component: () => import('@/views/pages/Landing.vue')
         },
         {
             path: '/pages/notfound',

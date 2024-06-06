@@ -2,14 +2,14 @@
     <div class="grid bg-black">
         <div class="col-12 md:col-5">
             <div class="card p-fluid">
-                <h3>Pentashih</h3>
+                <h3>Raport Santri</h3>
                 <div class="field">
                     <label for="name1">Nama</label>
                     <InputText id="name1" type="text" />
                     <!-- <small>Enter your username to reset your password.</small> -->
                 </div>
                 <div class="field">
-                    <label for="email1">Kode Santri</label>
+                    <label for="email1">Kode</label>
                     <div class="flex flex-row gap-3">
                         <InputText id="email1" type="text" />
                         <Button class="w-4 md:w-3" label="Cek"></Button>
@@ -20,34 +20,17 @@
 
         <div class="col-12 md:col-7">
             <div class="card p-fluid">
-                <h3>Santri</h3>
-                <div class="formgrid grid">
-                    <div class="field col-7">
-                        <label for="name2">Nama</label>
-                        <InputText id="name2" type="text" value="Nama Santri" disabled />
-                    </div>
-                    <div class="field col-5">
-                        <label for="email2">Tanggal</label>
-                        <InputGroup>
-                            <Calendar inputId="calendar" v-model="date"></Calendar>
-                            <InputGroupAddon>
-                                <i class="pi pi-calendar"></i>
-                            </InputGroupAddon>
-                        </InputGroup>
-                    </div>
-                </div>
-                <Divider class="my-3" />
                 <div class="">
                     <TabView :scrollable="true">
                         <TabPanel v-for="(tab, index) in tabItems" :key="index" :header="tab.title">
                             <div v-for="(value, index) in tab.children" :key="index" class="py-3">
                                 <h5>{{ value.title }}</h5>
-                                <div class="formgrid grid">
-                                    <div v-if="value.setoran" class="field col-6">
+                                <div class="formgrid md:grid">
+                                    <div v-if="value.setoran" class="field md:col-6">
                                         <label for="name2">Setoran</label>
                                         <Dropdown v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="Capaian" />
                                     </div>
-                                    <div v-if="value.hafalan"class="field col-5">
+                                    <div v-if="value.hafalan"class="field md:col-5">
                                         <label for="email2">Hafalan</label>
                                         <Dropdown v-model="dropdownValue" :options="dropdownValues" optionLabel="name" placeholder="Capaian" />
                                     </div>
@@ -63,6 +46,12 @@
         </div>
     </div>
 </template>
+
+<style>
+.p-tabview-panels {
+    padding: 1rem 0.25rem;
+}
+</style>
 
 <script setup>
 import { ref, watch } from 'vue';
