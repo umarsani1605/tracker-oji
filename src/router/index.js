@@ -14,7 +14,7 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
-                    path: '/pages/pentashih',
+                    path: '/pentashih',
                     name: 'pentashih',
                     component: () => import('@/views/pages/Pentashih.vue'),
                     children: [
@@ -33,7 +33,7 @@ const router = createRouter({
                     ]
                 },
                 {
-                    path: '/pages/raport-santri',
+                    path: '/raport-santri',
                     name: 'raport-santri',
                     component: () => import('@/views/pages/Santri.vue')
                 },
