@@ -5,12 +5,14 @@
                 <h3>Pentashih</h3>
                 <div class="field">
                     <label for="pentashih">Nama</label>
-                    <InputText v-model="pentashih" id="pentashih" type="text" />
+                    <InputText v-model="checkSantriState.pentashih" id="pentashih" type="text" />
+                    <!-- <small v-for="error in checkSantriValidate$.pentashih.$errors" :key="error.uid">{{ error.messages
+                        }}</small> -->
                 </div>
                 <div class="field">
                     <label for="santri-code">Kode Santri</label>
                     <div class="flex flex-row gap-3">
-                        <InputText v-model="santriCode" id="santri-code" type="text" />
+                        <InputText v-model="checkSantriState.santriCode" id="santri-code" type="text" />
                         <Button @click="checkSantri" class="w-4 md:w-3" label="Cek"></Button>
                     </div>
                 </div>
@@ -27,7 +29,8 @@
                     <div class="formgrid mb-5 md:grid">
                         <div class="field md:col-7">
                             <label for="santri-name">Nama</label>
-                            <InputText v-model="santriName" id="santri-name" type="text" placeholder="Nama Santri" disabled />
+                            <InputText v-model="santriName" id="santri-name" type="text" placeholder="Nama Santri"
+                                disabled />
                         </div>
                         <div class="field md:col-5">
                             <label for="date">Tanggal</label>
@@ -48,11 +51,15 @@
                                     <div class="formgrid md:grid">
                                         <div v-if="subject.has_setoran" class="field md:col-6">
                                             <label for="name2">Setoran</label>
-                                            <Dropdown v-model="grades[subject.category_slug][subject.title_slug]['setoran']" :options="gradeValues" optionLabel="name" placeholder="Capaian" />
+                                            <Dropdown
+                                                v-model="grades[subject.category_slug][subject.title_slug]['setoran']"
+                                                :options="gradeValues" optionLabel="name" placeholder="Capaian" />
                                         </div>
-                                        <div v-if="subject.has_hafalan"class="field md:col-5">
+                                        <div v-if="subject.has_hafalan" class="field md:col-5">
                                             <label for="email2">Hafalan</label>
-                                            <Dropdown v-model="grades[subject.category_slug][subject.title_slug]['hafalan']" :options="gradeValues" optionLabel="name" placeholder="Capaian" />
+                                            <Dropdown
+                                                v-model="grades[subject.category_slug][subject.title_slug]['hafalan']"
+                                                :options="gradeValues" optionLabel="name" placeholder="Capaian" />
                                         </div>
                                     </div>
                                 </div>
@@ -75,8 +82,10 @@
 </style>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, reactive, computed, watch, onMounted } from 'vue';
 import { supabase } from '../../../utils/supabase'
+import { useVuelidate } from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
 
 const pentashih = ref(null);
 const checked = ref(false);
@@ -89,6 +98,36 @@ const gradeValues = ref([
     { name: 'Tidak Tercapai' },
     { name: 'Tercapai' },
 ]);
+
+const checkSantriState = reactive({
+    pentashih: '',
+    santriCode: '',
+})
+
+const checkSantriRules = {
+    pentashih: { required },
+    santriCode: { required },
+}
+
+const checkSantriValidate$ = useVuelidate(checkSantriRules, checkSantriState)
+
+
+async function checkSantri() {
+
+    const validate = await checkSantriValidate$.value.$validate();
+
+    console.log(validate);
+
+    if (validate) {
+        const { data } = await supabase.from('santri').select().eq('code', checkSantriState.santriCode).single();
+        santriName.value = data.name;
+        date.value = new Date();
+        checked.value = true;
+    } else {
+        alert('error')
+    }
+
+}
 
 async function getSubject() {
     return await supabase.from('subject').select()
@@ -127,20 +166,6 @@ function submitGrade() {
     console.log(JSON.stringify(grades.value));
 }
 
-async function checkSantri() {
-    const { data } = await supabase.from('santri').select()
-        .eq('code', santriCode.value)
-        .single();
-    if (data) {
-        santriName.value = data.name;
-    } else {
-        santriName.value = null;
-    }
-
-    date.value = new Date();
-
-    checked.value = true;
-}
 
 onMounted(async () => {
     const { data } = await getSubject();
