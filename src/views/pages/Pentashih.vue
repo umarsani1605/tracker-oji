@@ -6,8 +6,8 @@
                 <div class="field">
                     <label for="pentashih">Nama</label>
                     <InputText v-model="checkSantriState.pentashih" id="pentashih" type="text" />
-                    <!-- <small v-for="error in checkSantriValidate$.pentashih.$errors" :key="error.uid">{{ error.messages
-                        }}</small> -->
+                    <small v-for="error of checkSantriValidate$.pentashih.$errors" :key="error.$uid">
+                        {{ error.$messages }}</small>
                 </div>
                 <div class="field">
                     <label for="santri-code">Kode Santri</label>
@@ -15,6 +15,8 @@
                         <InputText v-model="checkSantriState.santriCode" id="santri-code" type="text" />
                         <Button @click="checkSantri" class="w-4 md:w-3" label="Cek"></Button>
                     </div>
+                    <small v-for="error of checkSantriValidate$.santriCode.$errors" :key="error.$uid">
+                        {{ error.$messages }}</small>
                 </div>
             </div>
         </div>
@@ -114,17 +116,17 @@ const checkSantriValidate$ = useVuelidate(checkSantriRules, checkSantriState)
 
 async function checkSantri() {
 
-    const validate = await checkSantriValidate$.value.$validate();
+    const isFormCorrect = await checkSantriValidate$.value.$validate();
 
-    console.log(validate);
+    console.log(isFormCorrect);
 
-    if (validate) {
+    if (isFormCorrect) {
         const { data } = await supabase.from('santri').select().eq('code', checkSantriState.santriCode).single();
         santriName.value = data.name;
         date.value = new Date();
         checked.value = true;
     } else {
-        alert('error')
+        alert(JSON.stringify(checkSantriValidate$.value.$errors))
     }
 
 }
