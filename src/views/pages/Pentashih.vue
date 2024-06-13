@@ -5,18 +5,16 @@
                 <h3>Pentashih</h3>
                 <div class="field">
                     <label for="pentashih">Nama</label>
-                    <InputText v-model="checkSantriState.pentashih" id="pentashih" type="text" />
-                    <small v-for="error of checkSantriValidate$.pentashih.$errors" :key="error.$uid">
-                        {{ error.$messages }}</small>
+                    <InputText v-model="checkSantriValidate$.pentashih.$model" id="pentashih" type="text" :invalid="checkSantriValidate$.pentashih.$error"/>
+                    <small class="text-red-600" v-if="checkSantriValidate$.pentashih.$error">Nama harus diisi</small>
                 </div>
                 <div class="field">
                     <label for="santri-code">Kode Santri</label>
                     <div class="flex flex-row gap-3">
-                        <InputText v-model="checkSantriState.santriCode" id="santri-code" type="text" />
+                        <InputText v-model="checkSantriValidate$.santriCode.$model" id="santri-code" type="text" :invalid="checkSantriValidate$.santriCode.$error"/>
                         <Button @click="checkSantri" class="w-4 md:w-3" label="Cek"></Button>
                     </div>
-                    <small v-for="error of checkSantriValidate$.santriCode.$errors" :key="error.$uid">
-                        {{ error.$messages }}</small>
+                    <small class="text-red-500" v-if="checkSantriValidate$.santriCode.$error">Kode harus diisi</small>
                 </div>
             </div>
         </div>
@@ -24,7 +22,10 @@
         <div class="col-12 md:col-7">
             <div class="card p-fluid">
                 <div v-if="!checked">
-                    Tes
+                    <h3>Santri</h3>
+                    <Message severity="success" icon="pi pi-info-circle" :closable="false">
+                        <span>Masukkan nama dan kode santri</span>
+                    </Message>
                 </div>
                 <div v-else>
                     <h3>Santri</h3>
@@ -46,7 +47,7 @@
                     </div>
                     <Divider class="my-3" />
                     <div class="">
-                        <TabView :scrollable="true">
+                        <!-- <TabView :scrollable="true">
                             <TabPanel v-for="(item, index) in subject" :key="index" :header="item.title">
                                 <div v-for="(subject, index) in item.children" :key="index" class="py-3">
                                     <h5>{{ subject.title }}</h5>
@@ -66,10 +67,11 @@
                                     </div>
                                 </div>
                             </TabPanel>
-                        </TabView>
+                        </TabView> -->
                     </div>
+                    <ConfirmDialog></ConfirmDialog>
                     <div class="flex flex-row-reverse">
-                        <Button @click="submitGrade" label="Simpan" icon="pi pi-save" class="w-fit mr-2"></Button>
+                        <Button @click="konfirmasi()" label="Simpan" icon="pi pi-save" class="w-fit mr-2"></Button>
                     </div>
                 </div>
             </div>
@@ -81,6 +83,12 @@
 .p-tabview-panels {
     padding: 1rem 0.25rem;
 }
+.p-dialog-header {
+    color: #10b981;
+}
+.p-dialog {
+    margin: 0 1.5rem !important;
+}
 </style>
 
 <script setup>
@@ -88,6 +96,8 @@ import { ref, reactive, computed, watch, onMounted } from 'vue';
 import { supabase } from '../../../utils/supabase'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
 
 const pentashih = ref(null);
 const checked = ref(false);
@@ -121,18 +131,31 @@ async function checkSantri() {
     console.log(isFormCorrect);
 
     if (isFormCorrect) {
-        const { data } = await supabase.from('santri').select().eq('code', checkSantriState.santriCode).single();
-        santriName.value = data.name;
-        date.value = new Date();
-        checked.value = true;
-    } else {
-        alert(JSON.stringify(checkSantriValidate$.value.$errors))
-    }
 
+        const santri = await supabase.from('santri').select().eq('code', checkSantriState.santriCode).single();
+
+        santriName.value = santri.data.name;
+        date.value = new Date();
+        
+        checked.value = true;
+
+        console.log(santri.data);
+
+        const grades = await getSubject(santri.data.id);
+
+        console.log(grades.data);
+
+        [subject.value, grades.value] = mapData(grades);
+        
+    } else {
+        // to do
+    }
 }
 
-async function getSubject() {
-    return await supabase.from('subject').select()
+async function getSubject(idSantri) {
+    return await supabase.from('grade').select(`
+        id, id_santri, id_subject, subject ( name, name_slug, category, category_slug, has_hafalan, has_setoran )
+    `).eq('id_santri', idSantri);
 }
 
 function mapData(data) {
@@ -168,10 +191,32 @@ function submitGrade() {
     console.log(JSON.stringify(grades.value));
 }
 
+const confirm = useConfirm();
+const toast = useToast();
+
+const konfirmasi = () => {
+    confirm.require({
+        message: 'Apakah kamu sudah yakin? <br> Mohon koreksi kembali sebelum menyimpan.',
+        header: 'Konfirmasi',
+        icon: 'pi pi-exclamation-circle',
+        rejectProps: {
+            label: 'Batalkan',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Simpan'
+        },
+        accept: () => {
+            submitGrade();
+            toast.add({ severity: 'success', summary: 'Data disimpan!', life: 3000 });
+        },
+    });
+};
 
 onMounted(async () => {
-    const { data } = await getSubject();
-    [subject.value, grades.value] = mapData(data);
+    // const { data } = await getSubject();
+    // [subject.value, grades.value] = mapData(data);
 })
 
 </script>

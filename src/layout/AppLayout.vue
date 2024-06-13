@@ -6,8 +6,8 @@
         </div> -->
         <div class="layout-main-container">
             <div class="layout-main">
-                <div class="py-4">
-                    <h1>Tracker Capaian Ngaji 📝</h1>
+                <div class="px-2 py-4">
+                    <h1 class="text-4xl font-bold">📝 Ujian Omah Ngaji</h1>
                 </div>
                 <router-view></router-view>
             </div>
