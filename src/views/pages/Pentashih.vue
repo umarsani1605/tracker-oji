@@ -1,17 +1,22 @@
 <template>
+    <div class="px-2 py-4">
+        <h1 class="text-4xl font-bold">📝 Ujian Omah Ngaji</h1>
+    </div>
     <div class="grid bg-black">
         <div class="col-12 md:col-5">
             <div class="card p-fluid">
                 <h3>Pentashih</h3>
                 <div class="field">
                     <label for="pentashih">Nama</label>
-                    <InputText v-model="checkSantriValidate$.pentashih.$model" id="pentashih" type="text" :invalid="checkSantriValidate$.pentashih.$error"/>
+                    <InputText v-model="checkSantriValidate$.pentashih.$model" id="pentashih" type="text"
+                        :invalid="checkSantriValidate$.pentashih.$error" />
                     <small class="text-red-600" v-if="checkSantriValidate$.pentashih.$error">Nama harus diisi</small>
                 </div>
                 <div class="field">
                     <label for="santri-code">Kode Santri</label>
                     <div class="flex flex-row gap-3">
-                        <InputText v-model="checkSantriValidate$.santriCode.$model" id="santri-code" type="text" :invalid="checkSantriValidate$.santriCode.$error"/>
+                        <InputText v-model="checkSantriValidate$.santriCode.$model" id="santri-code" type="text"
+                            :invalid="checkSantriValidate$.santriCode.$error" />
                         <Button @click="checkSantri" class="w-4 md:w-3" label="Cek"></Button>
                     </div>
                     <small class="text-red-500" v-if="checkSantriValidate$.santriCode.$error">Kode harus diisi</small>
@@ -47,27 +52,28 @@
                     </div>
                     <Divider class="my-3" />
                     <div class="">
-                        <!-- <TabView :scrollable="true">
-                            <TabPanel v-for="(item, index) in subject" :key="index" :header="item.title">
-                                <div v-for="(subject, index) in item.children" :key="index" class="py-3">
-                                    <h5>{{ subject.title }}</h5>
+                        <TabView :scrollable="true">
+                            <TabPanel v-for="(category, index) in grades" :key="index"
+                                :header="category[0].subject_category">
+                                <div v-for="(subject, index) in category" :key="index" class="py-3">
+                                    <h5>{{ subject.subject_name }}</h5>
                                     <div class="formgrid md:grid">
                                         <div v-if="subject.has_setoran" class="field md:col-6">
-                                            <label for="name2">Setoran</label>
-                                            <Dropdown
-                                                v-model="grades[subject.category_slug][subject.title_slug]['setoran']"
-                                                :options="gradeValues" optionLabel="name" placeholder="Capaian" />
+                                            <label for="setoran">Setoran</label>
+                                            <Dropdown v-model="gradesState[subject.id_grade]['setoran']"
+                                                :options="gradeValues" optionLabel="grade"
+                                                placeholder="Pilih Capaian" />
                                         </div>
                                         <div v-if="subject.has_hafalan" class="field md:col-5">
-                                            <label for="email2">Hafalan</label>
-                                            <Dropdown
-                                                v-model="grades[subject.category_slug][subject.title_slug]['hafalan']"
-                                                :options="gradeValues" optionLabel="name" placeholder="Capaian" />
+                                            <label for="hafalan">Hafalan</label>
+                                            <Dropdown v-model="gradesState[subject.id_grade]['hafalan']"
+                                                :options="gradeValues" optionLabel="grade"
+                                                placeholder="Pilih Capaian" />
                                         </div>
                                     </div>
                                 </div>
                             </TabPanel>
-                        </TabView> -->
+                        </TabView>
                     </div>
                     <ConfirmDialog></ConfirmDialog>
                     <div class="flex flex-row-reverse">
@@ -83,9 +89,11 @@
 .p-tabview-panels {
     padding: 1rem 0.25rem;
 }
+
 .p-dialog-header {
     color: #10b981;
 }
+
 .p-dialog {
     margin: 0 1.5rem !important;
 }
@@ -98,18 +106,17 @@ import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
+import dateFormat, { i18n } from 'dateformat'
 
-const pentashih = ref(null);
 const checked = ref(false);
-const santriCode = ref(null);
 const santriName = ref(null);
 const date = ref(null);
-const subject = ref([])
 const grades = ref({});
 const gradeValues = ref([
-    { name: 'Tidak Tercapai' },
-    { name: 'Tercapai' },
+    { grade: 'Tidak Tercapai' },
+    { grade: 'Tercapai' },
 ]);
+const gradesState = ref({});
 
 const checkSantriState = reactive({
     pentashih: '',
@@ -121,14 +128,55 @@ const checkSantriRules = {
     santriCode: { required },
 }
 
-const checkSantriValidate$ = useVuelidate(checkSantriRules, checkSantriState)
+i18n.dayNames = [
+    "Min",
+    "Sen",
+    "Sel",
+    "Rab",
+    "Kam",
+    "Jum",
+    "Sab",
+    "Ahad",
+    "Senin",
+    "Selasa",
+    "Rabu",
+    "Kamis",
+    "Jum'at",
+    "Sabtu",
+];
 
+i18n.monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Agu",
+    "Sep",
+    "Okt",
+    "Nov",
+    "Des",
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+];
+
+const checkSantriValidate$ = useVuelidate(checkSantriRules, checkSantriState)
 
 async function checkSantri() {
 
     const isFormCorrect = await checkSantriValidate$.value.$validate();
-
-    console.log(isFormCorrect);
 
     if (isFormCorrect) {
 
@@ -136,17 +184,12 @@ async function checkSantri() {
 
         santriName.value = santri.data.name;
         date.value = new Date();
-        
+
         checked.value = true;
 
-        console.log(santri.data);
+        const gradesRaw = await getSubject(santri.data.id);
+        [gradesState.value, grades.value] = await restructureData(gradesRaw.data);
 
-        const grades = await getSubject(santri.data.id);
-
-        console.log(grades.data);
-
-        [subject.value, grades.value] = mapData(grades);
-        
     } else {
         // to do
     }
@@ -154,41 +197,60 @@ async function checkSantri() {
 
 async function getSubject(idSantri) {
     return await supabase.from('grade').select(`
-        id, id_santri, id_subject, subject ( name, name_slug, category, category_slug, has_hafalan, has_setoran )
+        id, id_santri, id_subject, subject ( name, category, has_hafalan, has_setoran )
     `).eq('id_santri', idSantri);
 }
 
-function mapData(data) {
+async function submitGrade() {
 
-    let restructuredData = {};
-    let gradesRef = {};
+    let upsertData = []
 
-    data.forEach(item => {
-        if (!restructuredData[item.category]) {
-            restructuredData[item.category] = [];
-            gradesRef[item.category_slug] = {};
-        }
-        restructuredData[item.category].push({
-            title: item.name,
-            title_slug: item.name_slug,
-            category_slug: item.category_slug,
-            has_hafalan: item.has_hafalan,
-            has_setoran: item.has_setoran,
-        });
-        gradesRef[item.category_slug][item.name_slug] = {
-            hafalan: null,
-            setoran: null,
-        }
+    Object.keys(gradesState.value).forEach(key => {
+
+        upsertData.push({
+            id: key,
+            setoran: gradesState.value[key].setoran.grade,
+            hafalan: gradesState.value[key].hafalan.grade,
+            pentashih: checkSantriState.pentashih.replace(/"/g, ''),
+            date: dateFormat(new Date(), "dddd, d mmmm yyyy"),
+        })
     });
-    restructuredData = Object.keys(restructuredData).map(key => ({
-        title: key,
-        children: restructuredData[key]
-    }));
-    return [restructuredData, gradesRef]
+
+    return await supabase.from('grade').upsert(upsertData);
 }
 
-function submitGrade() {
-    console.log(JSON.stringify(grades.value));
+async function restructureData(data) {
+
+    let restructuredData = {};
+    let gradeRef = {};
+
+    data.forEach(item => {
+        if (!restructuredData[item.subject.category]) {
+            restructuredData[item.subject.category] = [];
+        }
+        restructuredData[item.subject.category].push({
+            id_grade: item.id,
+            id_santri: item.id_santri,
+            id_subject: item.id_subject,
+            subject_name: item.subject.name,
+            subject_category: item.subject.category,
+            has_hafalan: item.subject.has_hafalan,
+            has_setoran: item.subject.has_setoran,
+        });
+        gradeRef[item.id] = {
+            setoran: {
+                grade: null
+            },
+            hafalan: {
+                grade: null
+            },
+        }
+    });
+    // restructuredData = Object.keys(restructuredData).map(key => ({
+    //     title: key,
+    //     children: restructuredData[key]
+    // }));
+    return [gradeRef, restructuredData];
 }
 
 const confirm = useConfirm();

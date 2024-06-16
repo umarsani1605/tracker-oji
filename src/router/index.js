@@ -38,6 +38,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/Santri.vue')
                 },
                 {
+                    path: '/admin',
+                    name: 'admin',
+                    component: () => import('@/views/pages/Admin.vue')
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('@/views/uikit/FormLayout.vue')
