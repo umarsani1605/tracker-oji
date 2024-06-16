@@ -17,7 +17,7 @@
                     <div class="flex flex-row gap-3">
                         <InputText v-model="checkSantriValidate$.santriCode.$model" id="santri-code" type="text"
                             :invalid="checkSantriValidate$.santriCode.$error" />
-                        <Button @click="checkSantri" class="w-4 md:w-3" label="Cek"></Button>
+                        <Button @click="checkSantri" class="w-3 md:w-5" label="Cek"></Button>
                     </div>
                     <small class="text-red-500" v-if="checkSantriValidate$.santriCode.$error">Kode harus diisi</small>
                 </div>
@@ -58,7 +58,7 @@
                                 <div v-for="(subject, index) in category" :key="index" class="py-3">
                                     <h5>{{ subject.subject_name }}</h5>
                                     <div class="formgrid md:grid">
-                                        <div v-if="subject.has_setoran" class="field md:col-6">
+                                        <div v-if="subject.has_setoran" class="field md:col-5">
                                             <label for="setoran">Setoran</label>
                                             <Dropdown v-model="gradesState[subject.id_grade]['setoran']"
                                                 :options="gradeValues" optionLabel="grade"

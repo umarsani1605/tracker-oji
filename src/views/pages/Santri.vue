@@ -3,21 +3,21 @@
         <h1 class="text-4xl font-bold">📝 Raport Santri</h1>
     </div>
     <div class="grid bg-black">
-        <div class="col-12 md:col-5">
-            <div class="card p-fluid">
+        <div class="col-12">
+            <div class="card flex justify-content-center p-fluid">
                 <!-- <h3>Raport Santri</h3> -->
-                <div class="field">
+                <div class="field md:max-w-28rem">
                     <label for="santri-code">Kode Santri</label>
                     <div class="flex flex-row gap-3">
                         <InputText v-model="checkSantriValidate$.santriCode.$model"
                             :invalid="checkSantriValidate$.santriCode.$error" id="santri-code" type="text" />
-                        <Button @click="checkSantri" class="w-4 md:w-3" label="Cek"></Button>
+                        <Button @click="checkSantri" class="w-4 md:w-5" label="Cek"></Button>
                     </div>
                     <small class="text-red-500" v-if="checkSantriValidate$.santriCode.$error">Kode harus diisi</small>
                 </div>
             </div>
         </div>
-        <div class="col-12 md:col-7">
+        <div class="col-12">
             <div class="card p-fluid">
                 <div v-if="!checked">
                     <h3>Santri</h3>
